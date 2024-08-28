@@ -32,7 +32,7 @@ def find_button_coordinates(
                 'center_x:', center_x,
                 'center_y:', center_y,
             )
-    if best_region == None or highest_match < match_threshold:
+    if best_region == None or center_x == None or center_y == None or highest_match < match_threshold:
         raise Exception("Button not found in any region")
     if show_img_flag is True:
         x1, y1, x2, y2 = best_region
