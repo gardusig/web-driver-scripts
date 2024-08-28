@@ -1,3 +1,9 @@
+## download:
+
+Remember to keep the same matching version **X**
+- chromium version X
+- chromedriver version X
+
 ## install:
 
 ```bash
