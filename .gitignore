@@ -161,4 +161,4 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-ifood-gift-card/resources/sheet_data.json
+ifood-gift-card/resources/sheet_data.csv

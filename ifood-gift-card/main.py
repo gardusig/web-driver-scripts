@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from util.chromium import create_driver
-import json
+import csv
 import logging
 import pyautogui
 import pyperclip
@@ -11,16 +11,30 @@ import time
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
-SHEET_DATA_PATH = '/Users/gardusig/code/web-driver-scripts/ifood-gift-card/resources/sheet_data.json'
+SHEET_DATA_PATH = '/Users/gardusig/code/web-driver-scripts/ifood-gift-card/resources/sheet_data.csv'
 
 
-def load_sheet_data(json_path: str):
+def load_sheet_data(csv_path: str):
+    sheet_data = []
     try:
-        with open(json_path, 'r') as file:
-            return json.load(file)
+        with open(csv_path, 'r', newline='', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                row = row[0].split('\t')
+                if len(row) < 2:
+                    print(row)
+                    logging.warning(f"Skipping invalid row in {
+                                    csv_path}: {row}")
+                    continue
+                sheet_data.append({
+                    "link": row[0],
+                    "password": row[1],
+                    "code": None
+                })
+        logging.info(f"Successfully loaded sheet data from {csv_path}.")
     except Exception as e:
-        logging.error(f"Failed to load sheet data from {json_path}: {e}")
-        return []
+        logging.error(f"Failed to load sheet data from {csv_path}: {e}")
+    return sheet_data
 
 
 def fill_gift_card_password(driver, sheet_data):
@@ -66,6 +80,7 @@ def get_gift_card_code(driver, img_path: str = '/Users/gardusig/code/web-driver-
         logging.info('YouTube iframe loaded successfully.')
     except Exception as e:
         raise Exception(f"Failed to load YouTube iframe: {e}")
+    time.sleep(1)
     button_coordinates = find_button(img_path)
     if button_coordinates:
         pyautogui.click(button_coordinates)
@@ -93,14 +108,16 @@ def main():
     try:
         for sheet_data in sheet_data_list:
             try:
-                code = handle_gift_card(driver, sheet_data)
+                sheet_data['code'] = handle_gift_card(driver, sheet_data)
                 logging.info(f"Finished processing gift card for {
-                             sheet_data['link']}, code: {code}")
+                             sheet_data['link']}")
             except Exception as e:
                 logging.error(f"Error handling gift card for link: {
                               sheet_data['link']}, reason: {e}")
     finally:
         driver.quit()
+    for sheet_data in sheet_data_list:
+        print(sheet_data['code'])
 
 
 if __name__ == "__main__":
