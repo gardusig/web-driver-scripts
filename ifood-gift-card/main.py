@@ -11,7 +11,7 @@ import time
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
-SHEET_DATA_PATH = '/Users/gardusig/code/hybrid-web-scripts/web-driver/resources/sheet_data.json'
+SHEET_DATA_PATH = '/Users/gardusig/code/web-driver-scripts/ifood-gift-card/resources/sheet_data.json'
 
 
 def load_sheet_data(json_path: str):
@@ -57,13 +57,15 @@ def open_gift_card(img_path: str = '/Users/gardusig/code/web-driver-scripts/ifoo
 
 def get_gift_card_code(driver, img_path: str = '/Users/gardusig/code/web-driver-scripts/ifood-gift-card/resources/copy-gift-card-button.png'):
     try:
-        _ = WebDriverWait(driver, 30).until(
+        WebDriverWait(driver, 30).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "body > flutter-view"))
+                (By.CSS_SELECTOR,
+                 "iframe[src='https://www.youtube.com/embed/Tkc0M8vwDTU']")
+            )
         )
+        logging.info('YouTube iframe loaded successfully.')
     except Exception as e:
-        raise Exception(f"Failed to load flutter view: {e}")
-    time.sleep(3)
+        raise Exception(f"Failed to load YouTube iframe: {e}")
     button_coordinates = find_button(img_path)
     if button_coordinates:
         pyautogui.click(button_coordinates)
