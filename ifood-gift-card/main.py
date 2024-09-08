@@ -49,8 +49,8 @@ def fill_gift_card_password(driver, sheet_data):
     input_element.send_keys(sheet_data["password"])
 
 
-def find_button(img_path: str, retina_scale_factor: float = 2.0):
-    button_location = pyautogui.locateOnScreen(img_path)
+def find_button(img_path: str, retina_scale_factor: float = 2.0, confidence: float = 0.8):
+    button_location = pyautogui.locateOnScreen(img_path, confidence=confidence)
     if button_location is None:
         logging.warning(f'Button not found: {img_path}')
         return None
@@ -62,32 +62,28 @@ def find_button(img_path: str, retina_scale_factor: float = 2.0):
 
 
 def open_gift_card(img_path: str = '/Users/gardusig/code/web-driver-scripts/ifood-gift-card/resources/open-gift-card-button.png'):
-    button_coordinates = find_button(img_path)
-    if button_coordinates:
+    try:
+        button_coordinates = find_button(img_path)
         pyautogui.click(button_coordinates)
-    else:
-        logging.error('Failed to find the open gift card button.')
+    except Exception as e:
+        logging.error('Failed to find the open gift card button. Reason:', e)
 
 
 def get_gift_card_code(driver, img_path: str = '/Users/gardusig/code/web-driver-scripts/ifood-gift-card/resources/copy-gift-card-button.png'):
-    try:
-        WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located(
-                (By.CSS_SELECTOR,
-                 "iframe[src='https://www.youtube.com/embed/Tkc0M8vwDTU']")
-            )
+    WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located(
+            (By.CSS_SELECTOR,
+                "iframe[src='https://www.youtube.com/embed/Tkc0M8vwDTU']")
         )
-        logging.info('YouTube iframe loaded successfully.')
-    except Exception as e:
-        raise Exception(f"Failed to load YouTube iframe: {e}")
-    time.sleep(1)
-    button_coordinates = find_button(img_path)
-    if button_coordinates:
+    )
+    logging.info('YouTube iframe loaded successfully.')
+    try:
+        button_coordinates = find_button(img_path, confidence=0.45)
         pyautogui.click(button_coordinates)
         time.sleep(1)
         return pyperclip.paste()
-    else:
-        logging.error('Failed to find the copy gift card button.')
+    except Exception as e:
+        logging.error('Failed to find the copy gift card button. Reason:', e)
         return None
 
 
