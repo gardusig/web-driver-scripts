@@ -103,13 +103,15 @@ def main():
     driver = create_driver()
     try:
         for sheet_data in sheet_data_list:
-            try:
-                sheet_data['code'] = handle_gift_card(driver, sheet_data)
-                logging.info(f"Finished processing gift card for {
-                             sheet_data['link']}")
-            except Exception as e:
-                logging.error(f"Error handling gift card for link: {
-                              sheet_data['link']}, reason: {e}")
+            while True:
+                try:
+                    sheet_data['code'] = handle_gift_card(driver, sheet_data)
+                    logging.info(f"Finished processing gift card for {
+                        sheet_data['link']}")
+                    break
+                except Exception as e:
+                    logging.error(f"Error handling gift card for link: {
+                        sheet_data['link']}, reason: {e}")
     finally:
         driver.quit()
     for sheet_data in sheet_data_list:
