@@ -77,14 +77,10 @@ def get_gift_card_code(driver, img_path: str = '/Users/gardusig/code/web-driver-
         )
     )
     logging.info('YouTube iframe loaded successfully.')
-    try:
-        button_coordinates = find_button(img_path, confidence=0.45)
-        pyautogui.click(button_coordinates)
-        time.sleep(1)
-        return pyperclip.paste()
-    except Exception as e:
-        logging.error('Failed to find the copy gift card button. Reason:', e)
-        return None
+    button_coordinates = find_button(img_path, confidence=0.43)
+    pyautogui.click(button_coordinates)
+    time.sleep(1)
+    return pyperclip.paste()
 
 
 def handle_gift_card(driver, sheet_data):
